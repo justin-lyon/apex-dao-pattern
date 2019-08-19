@@ -6,6 +6,11 @@ With great power comes great catastrophe.
 
 With some discipline, data access in Apex can be streamlined to a single pattern. This pattern allows for the collocation of all queries and dml statements in Data Access Modules, by SObject. Each module is four Apex Classes. The classes are named for the SObject and their role in the module. Each module extends a core DmlInterface Module.
 
+# Contents
+
+ 1. [The DML Module](#the-dml-module)
+ 1. [The Data Access Module Roles](#the-data-access-module-roles)
+
 ## The DML Module
 
 Nearly all SObjects support DML operations of INSERT, UPDATE, UPSERT, and DELETE. In support of this, the DML Module describes an SObject generic method for each of these DML statements. The DML Module is a closed interface, extended by your SObject DAI.
