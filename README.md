@@ -9,7 +9,7 @@ With some discipline, data access in Apex can be streamlined to a single pattern
 # Contents
 
  1. [The DML Module](#the-dml-module)
- 1. [The Data Access Module Roles](#the-data-access-module-roles)
+ 1. [The Data Access Module](#the-data-access-module)
 
 ## The DML Module
 
@@ -22,10 +22,10 @@ DmlInterface describes the four DML methods available to SObjects.
 Extended by your DAI Interface.
 ```java
 public interface DmlInterface {
-	void insertRecords(List<SObject> newRecords);
-	void updateRecords(List<SObject> records);
-	void upsertRecords(List<SObject> records);
-	void deleteRecords(List<SObject> records);
+  void insertRecords(List<SObject> newRecords);
+  void updateRecords(List<SObject> records);
+  void upsertRecords(List<SObject> records);
+  void deleteRecords(List<SObject> records);
 }
 ```
 
@@ -37,21 +37,21 @@ Extended by your DA class.
 ```java
 public abstract class DmlBase implements DmlInterface {
 
-	public void insertRecords(List<SObject> newRecords) {
-		insert newRecords;
-	}
+  public void insertRecords(List<SObject> newRecords) {
+    insert newRecords;
+  }
 
-	public void updateRecords(List<SObject> records) {
-		update records;
-	}
+  public void updateRecords(List<SObject> records) {
+    update records;
+  }
 
-	public void upsertRecords(List<SObject> records) {
-		upsert records;
-	}
+  public void upsertRecords(List<SObject> records) {
+    upsert records;
+  }
 
-	public void deleteRecords(List<SObject> records) {
-		delete records;
-	}
+  public void deleteRecords(List<SObject> records) {
+    delete records;
+  }
 }
 ```
 
@@ -62,58 +62,58 @@ DmlBaseMock is the mock implementation of the Dml Methods. This class is a compl
 Extended by your DAMock class.
 ```java
 public abstract class DmlBaseMock implements DmlInterface {
-	protected Map<Id, SObject> Records;
-	public MockSObjectBuilder Builder;
+  protected Map<Id, SObject> Records;
+  public MockSObjectBuilder Builder;
 
-	private static final String ID_FIELD = 'Id';
+  private static final String ID_FIELD = 'Id';
 
-	public DmlBaseMock(Map<Id, SObject> records, Schema.SObjectType objectType) {
-		this.Records = records;
-		this.builder = new MockSObjectBuilder(objectType);
-	}
+  public DmlBaseMock(Map<Id, SObject> records, Schema.SObjectType objectType) {
+    this.Records = records;
+    this.builder = new MockSObjectBuilder(objectType);
+  }
 
-	public List<SObject> getRecords() {
-		return this.Records.values();
-	}
+  public List<SObject> getRecords() {
+    return this.Records.values();
+  }
 
-	public void insertRecords(List<SObject> newRecords) {
-		for (SObject record : newRecords) {
-			if (record.get(ID_FIELD) != null) {
-				throw new DmlException('Cannot insert a record with an ID.');
-			}
-			Id recordId = builder.getMockId();
-			record.put(ID_FIELD, recordId);
-			this.Records.put((Id)recordId, record);
-		}
-	}
+  public void insertRecords(List<SObject> newRecords) {
+    for (SObject record : newRecords) {
+      if (record.get(ID_FIELD) != null) {
+        throw new DmlException('Cannot insert a record with an ID.');
+      }
+      Id recordId = builder.getMockId();
+      record.put(ID_FIELD, recordId);
+      this.Records.put((Id)recordId, record);
+    }
+  }
 
-	public void updateRecords(List<SObject> records) {
-		for (SObject record : records) {
-			if (record.get(ID_FIELD) == null) {
-				throw new DmlException('Records to update must have a record Id.');
-			}
-			this.Records.put((Id)record.get(ID_FIELD), record);
-		}
-	}
+  public void updateRecords(List<SObject> records) {
+    for (SObject record : records) {
+      if (record.get(ID_FIELD) == null) {
+        throw new DmlException('Records to update must have a record Id.');
+      }
+      this.Records.put((Id)record.get(ID_FIELD), record);
+    }
+  }
 
-	public void upsertRecords(List<SObject> records) {
-		for (SObject record : records) {
-			if (record.get(ID_FIELD) == null) {
-				Id recordId = builder.getMockId();
-				record.put(ID_FIELD, recordId);
-			}
-			this.Records.put((Id)record.get(ID_FIELD), record);
-		}
-	}
+  public void upsertRecords(List<SObject> records) {
+    for (SObject record : records) {
+      if (record.get(ID_FIELD) == null) {
+        Id recordId = builder.getMockId();
+        record.put(ID_FIELD, recordId);
+      }
+      this.Records.put((Id)record.get(ID_FIELD), record);
+    }
+  }
 
-	public void deleteRecords(List<SObject> records) {
-		for (SObject record : records) {
-			if (record.get(ID_FIELD) == null) {
-				throw new DmlException('Records to delete must have a record Id.');
-			}
-			this.Records.remove((Id)record.get(ID_FIELD));
-		}
-	}
+  public void deleteRecords(List<SObject> records) {
+    for (SObject record : records) {
+      if (record.get(ID_FIELD) == null) {
+        throw new DmlException('Records to delete must have a record Id.');
+      }
+      this.Records.remove((Id)record.get(ID_FIELD));
+    }
+  }
 }
 ```
 
@@ -127,7 +127,7 @@ private class DmlBaseTest {
 }
 ```
 
-## The Data Access Module Roles:
+## The Data Access Module:
 
 In following this pattern, developers will create/edit/maintain the four following classes per SObject for each Data Access Module.
 
@@ -135,10 +135,13 @@ In following this pattern, developers will create/edit/maintain the four followi
 
 The Interface which defines the method signatures that the DA and DAMock implementations are responsible for.
 
+Note that the DAI extends the `DmlInterface`. This means that any class that implements the AccountDAI (AccountDA/AccountDAMock) must implement the `queryFiveRecentAccounts` as well as the methods on the DmlInterface. However, the DmlBase and DmlBasemock contain the implementation for the DmlInterface - so the AccountDA and AccountDAMock can extend these respectively to satisfy their complete interface contract with the AccountDAI.
+
 AccountDAI describes the queries that must be implemented by AccountDA and AccountDAMock.
 ```java
 public interface AccountDAI extends DmlInterface {
-	List<Account> queryFiveRecentAccounts();
+  // Adds the query method to the list of methods from DmlInterface
+  List<Account> queryFiveRecentAccounts();
 }
 ```
 
@@ -146,16 +149,18 @@ public interface AccountDAI extends DmlInterface {
 
 The runtime implementation for Data Access. Methods are implemented per the DAI.
 
+Implements the query described in AccountDAI, and extends the DmlBase to satisfy the DmlInterface that AccountDAI extends.
+
 AccountDA uses a SOQL Query to get recent accounts from the Salesforce Database.
 ```java
 public inherited sharing class AccountDA extends DmlBase implements AccountDAI {
   public List<Account> queryFiveRecentAccounts() {
     return [
-			SELECT Id,
-				Name
-			FROM Account
-			ORDER BY CreatedDate ASC
-			LIMIT 5];
+      SELECT Id,
+        Name
+      FROM Account
+      ORDER BY CreatedDate ASC
+      LIMIT 5];
   }
 }
 ```
@@ -163,6 +168,8 @@ public inherited sharing class AccountDA extends DmlBase implements AccountDAI {
 ### Data Accessor Mock (DAMock)
 
 A Mock Implementation for Data Access. Methods are implemented per the DAI. Class is annotated `@isTest`.
+
+Implements the query described in AccountDAI, and extends the DmlBaseMock to satisy the DmlInterface which AccountDAI extends.
 
 AccountDAMock returns fake account data instead of hitting the Database.
 ```java
