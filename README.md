@@ -216,12 +216,6 @@ public inherited sharing class AccountDAMock extends DmlBaseMock implements Acco
       throw new QueryException('Forced Exception from AccountDAMock.');
     }
   }
-
-  private void isDmlException() {
-    if (!IsSuccess) {
-      throw new DmlException('Forced Exception from AccountDAMock.');
-    }
-  }
 }
 ```
 
