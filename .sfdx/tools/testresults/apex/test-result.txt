@@ -1,0 +1,53 @@
+=== Test Reports
+FORMAT  FILE
+──────  ───────────────────────────────────────────────────────────────────────────────────────────────────────
+txt     c:\workspace\github\apex-dao-pattern\.sfdx\tools\testresults\apex\test-result.txt
+txt     c:\workspace\github\apex-dao-pattern\.sfdx\tools\testresults\apex\test-run-id.txt
+junit   c:\workspace\github\apex-dao-pattern\.sfdx\tools\testresults\apex\test-result-7071F00001BlGsF-junit.xml
+json    c:\workspace\github\apex-dao-pattern\.sfdx\tools\testresults\apex\test-result-7071F00001BlGsF.json
+json    c:\workspace\github\apex-dao-pattern\.sfdx\tools\testresults\apex\test-result-codecoverage.json
+
+=== Apex Code Coverage
+ID                  NAME             % COVERED  UNCOVERED LINES
+──────────────────  ───────────────  ─────────  ────────────────────────────────────────────────────────
+01p1F000005o4PfQAI  MockIdGenerator  100%
+01p1F000005oFqsQAE  DmlBaseMock      32%        16,17,18,19,21,22,23,27,28,29,30,32,36,37,38,39,40,42,49
+01p1F000005oFqrQAE  DmlBase          100%
+01p1F000005oFqnQAE  AccountDA        100%
+
+=== Test Results
+TEST NAME                                                                                        OUTCOME  MESSAGE  RUNTIME (MS)
+───────────────────────────────────────────────────────────────────────────────────────────────  ───────  ───────  ────────────
+AccountDATest.mockEnvironment_givenPassByReference_changesShouldReflectBetweenDAMockAndBaseMock  Pass              681
+AccountDATest.queryLimittedAccounts_given5_shouldGet5Accounts                                    Pass              19
+AccountDATest.searchAccounts_givenString_shouldGetOneAccount                                     Pass              36
+DmlBaseTest.deleteRecords_givenOldAccount_shouldGetNullID                                        Pass              1133
+DmlBaseTest.insertRecords_givenAccount_shouldGetId                                               Pass              54
+DmlBaseTest.updateRecords_givenAccount_shouldGetUpdatedAccount                                   Pass              65
+DmlBaseTest.upsertRecords_givenNewAccount_shouldGetId                                            Pass              57
+MockIdGeneratorTest.getMockId_givenAccount_shouldGetAccountPrefixId                              Pass              671
+MockIdGeneratorTest.getMockId_givenTwoObjectStates_shouldGetUniqueObjectCounts                   Pass              151
+MockIdGeneratorTest.statelessMockId_givenContact_shouldGetContactId                              Pass              10
+
+=== Test Summary
+NAME                 VALUE
+───────────────────  ─────────────────────────────────────────────────────
+Outcome              Passed
+Tests Ran            10
+Passing              10
+Failing              0
+Skipped              0
+Pass Rate            100%
+Fail Rate            0%
+Test Start Time      Nov 21, 2019 7:22 AM
+Test Execution Time  2877 ms
+Test Total Time      2877 ms
+Command Time         3460 ms
+Hostname             https://drive-site-175-dev-ed.cs90.my.salesforce.com
+Org Id               00D1F000000G3RJUA0
+Username             test-cw11cnpryfrp@example.com
+Test Run Id          7071F00001BlGsF
+User Id              0051F000004kNsMQAU
+Test Run Coverage    72%
+Org Wide Coverage    15%
+

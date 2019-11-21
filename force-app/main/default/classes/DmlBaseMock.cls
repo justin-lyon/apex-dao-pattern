@@ -1,12 +1,12 @@
 public abstract class DmlBaseMock implements DmlInterface {
 	protected Map<Id, SObject> Records;
-	public MockSObjectBuilder Builder;
+	public MockIdGenerator Builder;
 
 	private static final String ID_FIELD = 'Id';
 
 	public DmlBaseMock(Map<Id, SObject> records, Schema.SObjectType objectType) {
 		this.Records = records;
-		this.builder = new MockSObjectBuilder(objectType);
+		this.Builder = new MockIdGenerator(objectType);
 	}
 
 	public List<SObject> getRecords() {
@@ -18,7 +18,7 @@ public abstract class DmlBaseMock implements DmlInterface {
 			if (record.get(ID_FIELD) != null) {
 				throw new DmlException('Cannot insert a record with an ID.');
 			}
-			Id recordId = builder.getMockId();
+			Id recordId = Builder.getMockId();
 			record.put(ID_FIELD, recordId);
 			this.Records.put((Id)recordId, record);
 		}
@@ -36,7 +36,7 @@ public abstract class DmlBaseMock implements DmlInterface {
 	public void upsertRecords(List<SObject> records) {
 		for (SObject record : records) {
 			if (record.get(ID_FIELD) == null) {
-				Id recordId = builder.getMockId();
+				Id recordId = Builder.getMockId();
 				record.put(ID_FIELD, recordId);
 			}
 			this.Records.put((Id)record.get(ID_FIELD), record);

@@ -2,13 +2,13 @@
 public class DmlMock implements DmlInterface {
 	protected Map<Id, SObject> DB_RECORDS;
 	protected Schema.SObjectType OBJECT_TYPE;
-	protected MockSObjectBuilder builder;
+	protected MockIdGenerator builder;
 	private static final String ID_FIELD = 'Id';
 
 	public DmlMock(Map<Id, SObject> records, String sobjectName) {
 		this.DB_RECORDS = records;
 		this.OBJECT_TYPE = Schema.getGlobalDescribe().get(sobjectName);
-		this.builder = new MockSObjectBuilder(OBJECT_TYPE);
+		this.builder = new MockIdGenerator(OBJECT_TYPE);
 	}
 
 	public void insertRecords(List<SObject> newRecords) {
