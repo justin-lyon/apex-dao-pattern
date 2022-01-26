@@ -135,13 +135,14 @@ In following this pattern, developers will create/edit/maintain the four followi
 
 The Interface which defines the method signatures that the DA and DAMock implementations are responsible for.
 
-Note that the DAI extends the `DmlInterface`. This means that any class that implements the AccountDAI (AccountDA/AccountDAMock) must implement the `queryFiveRecentAccounts` as well as the methods on the DmlInterface. However, the DmlBase and DmlBasemock contain the implementation for the DmlInterface - so the AccountDA and AccountDAMock can extend these respectively to satisfy their complete interface contract with the AccountDAI.
+Note that the DAI extends the `DmlInterface`. This means that any class that implements the AccountDAI (AccountDA/AccountDAMock) must implement both the `queryLimittedAccounts` and `searchAccounts` methods as well as the methods on the DmlInterface. However, the DmlBase and DmlBasemock contain the implementation for the DmlInterface - so the AccountDA and AccountDAMock can extend these respectively to satisfy their complete interface contract with the AccountDAI.
 
 AccountDAI describes the queries that must be implemented by AccountDA and AccountDAMock.
 ```java
 public interface AccountDAI extends DmlInterface {
-  // Adds the query method to the list of methods from DmlInterface
-  List<Account> queryFiveRecentAccounts();
+  // Adds the query methods to the list of methods from DmlInterface
+  List<Account> queryLimittedAccounts(Integer limitter);
+  List<Account> searchAccounts(String searchString);
 }
 ```
 
@@ -149,18 +150,33 @@ public interface AccountDAI extends DmlInterface {
 
 The runtime implementation for Data Access. Methods are implemented per the DAI.
 
-Implements the query described in AccountDAI, and extends the DmlBase to satisfy the DmlInterface that AccountDAI extends.
+Implements the queries described in AccountDAI, and extends the DmlBase to satisfy the DmlInterface that AccountDAI extends.
 
-AccountDA uses a SOQL Query to get recent accounts from the Salesforce Database.
+AccountDA uses SOQL Queries to get recent accounts from the Salesforce Database.
 ```java
 public inherited sharing class AccountDA extends DmlBase implements AccountDAI {
-  public List<Account> queryFiveRecentAccounts() {
+  public static final Integer MAX_RESULTS = 5;
+
+  public List<Account> queryLimittedAccounts(Integer limitter) {
+    limitter = Integer.valueOf(limitter);
     return [
       SELECT Id,
         Name
       FROM Account
       ORDER BY CreatedDate ASC
-      LIMIT 5];
+      LIMIT :limitter];
+  }
+
+  public List<Account> searchAccounts(String searchString) {
+    String escapedTerm = String.escapeSingleQuotes(searchString) + '*';
+
+    List<List<SObject>> results = [
+      FIND :escapedTerm IN ALL FIELDS
+      RETURNING
+        Account (Id, Name)
+      LIMIT :MAX_RESULTS];
+
+    return results[0];
   }
 }
 ```
@@ -169,7 +185,7 @@ public inherited sharing class AccountDA extends DmlBase implements AccountDAI {
 
 A Mock Implementation for Data Access. Methods are implemented per the DAI. Class is annotated `@isTest`.
 
-Implements the query described in AccountDAI, and extends the DmlBaseMock to satisy the DmlInterface which AccountDAI extends.
+Implements the queries described in AccountDAI, and extends the DmlBaseMock to satisy the DmlInterface which AccountDAI extends.
 
 AccountDAMock returns fake account data instead of hitting the Database.
 ```java
