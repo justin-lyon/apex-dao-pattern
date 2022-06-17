@@ -1,3 +1,11 @@
+### Edit June 2022
+
+Thanks to developments in the community, such a verbose pattern is no longer necessary to mock in Apex.
+
+As a first stop, I recommend checking out [UniversalMock](https://github.com/surajp/universalmock).
+
+As a second stop, I recommend checking out [dml-base](git@github.com:justin-lyon/apex-dao-pattern.git) where I've repurposed the pattern in this repository, streamlined it, to this new world order!
+
 # apex-dao-pattern
 
 Salesforce APEX is unique to other OO Languages in that we can use SOQL/SOSL or DML in-line anywhere within the code base. Developers can quickly and immediately author a query, or insert a collection of records in the class they are currently working.
